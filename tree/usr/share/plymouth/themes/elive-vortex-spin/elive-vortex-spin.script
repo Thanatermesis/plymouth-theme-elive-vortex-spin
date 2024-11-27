@@ -131,13 +131,12 @@ Plymouth.SetRefreshFunction(refresh_callback);
 if (Plymouth.GetMode () == "boot") {
     ipb = Image("pb.png");
     pb = Sprite(ipb);
-    pb.SetX(screen.half.w - 240);
+    pb.SetX(screen.half.w - 250);
     pb.SetY(screen.h * 0.6 - ipb.GetHeight() / 2);
 
     fun boot_progress_callback(duration, progress) {
-         pb.SetImage(ipb.Scale(progress * 100, 3));
-         /*pb.SetImage(ipb.Scale(progress * 4000, 9));*/
-         pb.SetImage(ipb.Scale(progress * 4000, 3));
+         // pb.SetImage(ipb.Scale(progress * 100, 3));
+         pb.SetImage(ipb.Scale(progress * 500, 3));
     }
     Plymouth.SetBootProgressFunction(boot_progress_callback);
 }
