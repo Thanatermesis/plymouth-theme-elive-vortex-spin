@@ -1,0 +1,58 @@
+#!/bin/sh
+
+set -e
+
+if [ "$(id -u)" != "0" ]; then
+    exec sudo "${0}" "${@}"
+fi
+
+if [ -z "$1" ]; then
+    echo -e "W: you can use 'prompt' as first argument"
+fi
+
+usage() {
+    (
+        echo "Usage: ${0} [prompt]"
+    ) >&2
+    exit 1
+}
+
+if [ "${1}" = "-h" ] || [ "${1}" = "--help" ] || [ "${1}" = "help" ]; then
+    usage
+fi
+
+set -x
+
+#plymouthd
+plymouthd --mode=boot
+
+trap 'plymouth quit' EXIT INT
+
+plymouth --show-splash
+if [ "${1}" = "prompt" ]; then
+    plymouth ask-for-password --prompt="Enter a password"
+    plymouth ask-question --command=cat --prompt="Say a few words"
+fi
+LC_ALL=C sleep 0.3
+plymouth display-message \
+    --text="Sample status or error text for display to the user"
+LC_ALL=C sleep 0.5
+
+    # Simulate update progress from 0% to 100%
+    for i in $(seq 100)
+    do
+        plymouth system-update --progress=$i
+        echo "Update progress: $i%"
+        #LC_ALL=C sleep 0.1  # Sleep for half a second to simulate the progress
+    done
+
+for i in $(seq 1 10); do
+    plymouth system-update --progress="${i}0"
+    plymouth --update="Update: Reticulating splines ${i}"
+    plymouth message --text="Message: Reticulating splines ${i}"
+    LC_ALL=C sleep 0.3
+done
+
+plymouth system-update --progress=100
+
+#sleep 1

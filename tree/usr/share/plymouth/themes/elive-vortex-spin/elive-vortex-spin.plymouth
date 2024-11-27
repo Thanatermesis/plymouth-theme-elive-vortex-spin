@@ -1,0 +1,9 @@
+[Plymouth Theme]
+Name=Splash theme for Elive
+Description=A theme made for Elive
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/elive-vortex-spin
+ScriptFile=/usr/share/plymouth/themes/elive-vortex-spin/elive-vortex-spin.script
+UseFirmwareBackground=false
