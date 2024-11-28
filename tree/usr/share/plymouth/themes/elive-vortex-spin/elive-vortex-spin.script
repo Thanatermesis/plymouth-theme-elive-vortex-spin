@@ -90,13 +90,13 @@ logo_sprite = make_splash_sprite_from_image(logo_image1);
     /*logo_sprite.sprite.SetImage(logo_sprite.image);*/
 /*}*/
 
-fun start_logo_animation() {
-    local.delay = Math.Random(1, 3);
-    /*Timer.SetTimeout(switch_logo, delay * 1000);*/
-    Timer.SetTimeout(start_logo_animation, (delay + 1) * 1000);
-}
+// fun start_logo_animation() {
+//     local.delay = Math.Random(1, 3);
+//     /*Timer.SetTimeout(switch_logo, delay * 1000);*/
+//     Timer.SetTimeout(start_logo_animation, (delay + 1) * 1000);
+// }
 
-start_logo_animation();
+// start_logo_animation();
 
 splash_static_bg_image = Image("static.png");
 splash_static_bg_image = splash_static_bg_image.Scale(splash_static_bg_image.GetWidth() * splash_scale * 0.3, splash_static_bg_image.GetHeight() * splash_scale * 0.3);
