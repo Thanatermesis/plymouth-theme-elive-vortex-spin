@@ -181,7 +181,7 @@ fun display_password_callback(prompt_text, dot_count) {
             response[i].sprite.SetY(response_y + (text_line_height - bullet.image.GetHeight()) / 2);
         }
     } else {
-        response.image = Image.Text("Enter passphrase", 1, 1, 1, 0.5);
+        response.image = Image.Text("Enter passphrase", 1, 1, 1, 0.5, "Sans 18");
         response.sprite = Sprite(response.image);
         response.sprite.SetX(screen.half.w - response.image.GetWidth() / 2);
         response.sprite.SetY(response_y);
