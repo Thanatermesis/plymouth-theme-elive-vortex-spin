@@ -4,6 +4,8 @@
 
 /*logo_spin = -0.009;*/
 logo_spin = 0.030;
+switch_time_counter = 0;
+
 
 /*
  * Screen dimensions
@@ -78,7 +80,7 @@ spins = [0.009, 0.007, 0.006, 0.0053, 0.0048, 0.004, 0.0035, 0.003, 0.0025, 0.00
 spin_sprite_count = 10;
 
 logo_image1 = Image("logo.png").Scale(220 * splash_scale, 220 * splash_scale);
-//logo_image2 = Image("logo_glow.png").Scale(220 * splash_scale, 220 * splash_scale);
+logo_image2 = Image("logo_glow.png").Scale(220 * splash_scale, 220 * splash_scale);
 logo_sprite = make_splash_sprite_from_image(logo_image1);
 
 fun switch_logo_refresh() {
@@ -122,7 +124,8 @@ fun rotate_splash_sprite(splash_sprite, rotation) {
 
 fun update_splash_sprites() {
     // spin the logo:
-    rotate_splash_sprite(logo_sprite, time_counter * logo_spin);
+    /*rotate_splash_sprite(logo_sprite, time_counter * logo_spin);*/
+
     for (i = 0; i < spin_sprite_count; i++) {
         rotate_splash_sprite(splash_sprites[i], time_counter * spins[i]);
     }
@@ -135,7 +138,7 @@ fun update_splash_sprites() {
 fun refresh_callback() {
     time_counter++;
     update_splash_sprites();
-    //switch_logo_refresh();
+    switch_logo_refresh();
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
