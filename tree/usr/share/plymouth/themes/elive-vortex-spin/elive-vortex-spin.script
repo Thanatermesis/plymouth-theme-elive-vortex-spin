@@ -77,26 +77,36 @@ fun make_splash_sprite(fn) {
 spins = [0.009, 0.007, 0.006, 0.0053, 0.0048, 0.004, 0.0035, 0.003, 0.0025, 0.002];
 spin_sprite_count = 10;
 
-logo_image1 = Image("logo.png").Scale(120 * splash_scale, 120 * splash_scale);
-/*logo_image2 = Image("logo2.png").Scale(120 * splash_scale, 120 * splash_scale);*/
+logo_image1 = Image("logo.png").Scale(220 * splash_scale, 220 * splash_scale);
+//logo_image2 = Image("logo_glow.png").Scale(220 * splash_scale, 220 * splash_scale);
 logo_sprite = make_splash_sprite_from_image(logo_image1);
 
-/*fun switch_logo() {*/
-    /*if (logo_sprite.image == logo_image1) {*/
-        /*logo_sprite.image = logo_image2;*/
-    /*} else {*/
-        /*logo_sprite.image = logo_image1;*/
-    /*}*/
-    /*logo_sprite.sprite.SetImage(logo_sprite.image);*/
-/*}*/
+fun switch_logo_refresh() {
+     // switch back the logo after a few counts
+     switch_time_counter++;
+     // Adjust this number to control the delay
+     if (switch_time_counter >= 20) {
+          logo_sprite.image = logo_image1;
+          logo_sprite.sprite.SetImage(logo_sprite.image);
+          switch_time_counter = 0;
+     }
 
-// fun start_logo_animation() {
-//     local.delay = Math.Random(1, 3);
-//     /*Timer.SetTimeout(switch_logo, delay * 1000);*/
-//     Timer.SetTimeout(start_logo_animation, (delay + 1) * 1000);
-// }
+     // randomize switch to glow logo
+     local.delay = Math.Random(1, 3);
+     if (local.delay > 0.984) {
+          switch_logo();
+     }
 
-// start_logo_animation();
+}
+fun switch_logo() {
+    if (logo_sprite.image == logo_image1) {
+        logo_sprite.image = logo_image2;
+    } else {
+        logo_sprite.image = logo_image1;
+    }
+    logo_sprite.sprite.SetImage(logo_sprite.image);
+}
+
 
 splash_static_bg_image = Image("static.png");
 splash_static_bg_image = splash_static_bg_image.Scale(splash_static_bg_image.GetWidth() * splash_scale * 0.3, splash_static_bg_image.GetHeight() * splash_scale * 0.3);
@@ -111,6 +121,7 @@ fun rotate_splash_sprite(splash_sprite, rotation) {
 }
 
 fun update_splash_sprites() {
+    // spin the logo:
     rotate_splash_sprite(logo_sprite, time_counter * logo_spin);
     for (i = 0; i < spin_sprite_count; i++) {
         rotate_splash_sprite(splash_sprites[i], time_counter * spins[i]);
@@ -124,6 +135,7 @@ fun update_splash_sprites() {
 fun refresh_callback() {
     time_counter++;
     update_splash_sprites();
+    //switch_logo_refresh();
 }
 Plymouth.SetRefreshFunction(refresh_callback);
 
