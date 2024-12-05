@@ -95,7 +95,7 @@ fun switch_logo_refresh() {
 
      // randomize switch to glow logo
      local.delay = Math.Random(1, 3);
-     if (local.delay > 0.985) {
+     if (local.delay > 0.986) {
           switch_logo();
      }
 
