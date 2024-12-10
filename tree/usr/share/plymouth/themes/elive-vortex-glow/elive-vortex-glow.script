@@ -87,7 +87,7 @@ fun switch_logo_refresh() {
      // switch back the logo after a few counts
      switch_time_counter++;
      // Adjust this number to control the delay
-     if (switch_time_counter >= 20) {
+     if (switch_time_counter >= 14) {
           logo_sprite.image = logo_image1;
           logo_sprite.sprite.SetImage(logo_sprite.image);
           switch_time_counter = 0;
