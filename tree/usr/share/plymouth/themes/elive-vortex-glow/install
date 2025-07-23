@@ -11,7 +11,7 @@ theme_name="elive-vortex-glow"
 
 install() {
     set -x
-    cp -r "$(dirname "${0}")/${theme_name}" "${themes_dir}/"
+    rsync -av --delete "$(dirname "${0}")/" "${themes_dir}/${theme_name}/"
     update-alternatives \
         --install \
         "${themes_dir}/default.plymouth" \
