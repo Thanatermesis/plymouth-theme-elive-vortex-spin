@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# plymouth-test – Run Plymouth with built-in demo sequence (progress + messages)
+set -euo pipefail
+
+PROG="$(basename "$0")"
+PLYMOUTH_DIR="${PLYMOUTH_DIR:-/usr/share/plymouth/themes}"
+
+RENDERER=""
+THEME=""
+WINDOW="1280x800"
+QUIET=false
+
+c_red=$'\e[31m' c_green=$'\e[32m' c_yellow=$'\e[33m' c_norm=$'\e[0m'
+
+info()  { $QUIET || echo -e "${c_green}[INFO]${c_norm} $*"; }
+warn()  { echo -e "${c_yellow}[WARN]${c_norm} $*" >&2; }
+err()   { echo -e "${c_red}[ERROR]${c_norm} $*" >&2; }
+die()   { err "$*"; exit 1; }
+
+usage() {
+cat <<EOF
+Usage: $PROG [OPTIONS]
+
+Options:
+  -r, --renderer <console|tty|x11>  Renderer to use (default: auto)
+  -t, --theme <name>                Theme name (default: current system theme)
+  -w, --window <WxH>                X11 window size (default: $WINDOW)
+  -s, --silent                      Suppress normal messages
+  -h, --help                        Show this help and exit
+EOF
+}
+
+check_deps() {
+    command -v plymouthd >/dev/null || die "Install package 'plymouth' or 'plymouthd'."
+    command -v plymouth  >/dev/null || die "Install package 'plymouth'."
+
+    case "$RENDERER" in
+        x11)
+            if ! test -e /var/lib/dpkg/info/plymouth-x11.list; then
+                die "Plymouth X11 renderer is not installed. Please install 'plymouth-x11' package."
+            fi
+            ;;
+    esac
+}
+
+auto_renderer() {
+    [[ -n ${DISPLAY:-} && -S /tmp/.X11-unix/X0 ]] && echo x11 || echo tty
+}
+
+cleanup() {
+    info "Stopping plymouthd ..."
+    plymouth quit || true
+    [[ -n ${PLYMOUTH_PID:-} ]] && { kill -TERM "$PLYMOUTH_PID" 2>/dev/null || true; wait 2>/dev/null; }
+}
+trap cleanup EXIT INT TERM
+
+start_plymouth() {
+    local extra_args=()
+    [[ -n $THEME ]] && extra_args+=(--theme="$THEME")
+    extra_args+=(--mode=boot --no-daemon --debug --renderer="$RENDERER")
+
+    info "Starting plymouthd (renderer=$RENDERER theme=${THEME:-system}) ..."
+    plymouthd "${extra_args[@]}" &
+    PLYMOUTH_PID=$!
+    sleep 0.5
+    plymouth --show-splash
+}
+
+run_demo() {
+    info "Running built-in demo (progress + messages) ..."
+
+    plymouth display-message --text="Sample status or error text for display to the user"
+    sleep 0.5
+
+    # 0-100 progress bar
+    for i in $(seq 100); do
+        plymouth system-update --progress=$i
+        $QUIET || printf "\rUpdate progress: %d%%" $i
+        sleep 0.03
+    done
+    $QUIET || echo
+
+    # message loop
+    for i in $(seq 1 10); do
+        plymouth system-update --progress=$((i*10))
+        plymouth --update="Update: Reticulating splines $i"
+        plymouth message --text="Message: Reticulating splines $i"
+        sleep 0.3
+    done
+
+    plymouth system-update --progress=100
+    info "Demo sequence complete."
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -r|--renderer) RENDERER="$2"; shift 2 ;;
+        -t|--theme)    THEME="$2";    shift 2 ;;
+        -w|--window)   WINDOW="$2";   shift 2 ;;
+        -s|--silent)   QUIET=true;    shift ;;
+        -h|--help)     usage; exit 0 ;;
+        *) die "Unknown option: $1" ;;
+    esac
+done
+
+[[ $EUID -eq 0 ]] || exec sudo -E "$0" "$@"
+
+[[ -z $RENDERER ]] && RENDERER="$(auto_renderer)"
+[[ -z $THEME ]] && THEME="$(plymouth --get-splash-theme 2>/dev/null || true)"
+
+check_deps
+start_plymouth
+
+[[ $RENDERER == x11 ]] && {
+    export PLYMOUTH_X11_WINDOW_WIDTH="${WINDOW%x*}"
+    export PLYMOUTH_X11_WINDOW_HEIGHT="${WINDOW#*x}"
+}
+
+run_demo
+info "Exiting ..."
