@@ -7,7 +7,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 themes_dir="/usr/share/plymouth/themes"
-theme_name="elive-vortex-glow"
+theme_name="elive-retrowave"
 
 install() {
     set -x

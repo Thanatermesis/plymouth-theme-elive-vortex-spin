@@ -4,6 +4,6 @@ Description=A theme made for Elive
 ModuleName=script
 
 [script]
-ImageDir=/usr/share/plymouth/themes/elive-vortex-glow
-ScriptFile=/usr/share/plymouth/themes/elive-vortex-glow/elive-vortex-glow.script
+ImageDir=/usr/share/plymouth/themes/elive-retrowave
+ScriptFile=/usr/share/plymouth/themes/elive-retrowave/elive-retrowave.script
 UseFirmwareBackground=false
