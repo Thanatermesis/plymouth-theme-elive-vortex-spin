@@ -21,7 +21,28 @@ screen.half.h = screen.h / 2;
 
 Window.SetBackgroundTopColor(0, 0, 0);
 Window.SetBackgroundBottomColor(0, 0, 0);
-bg = Sprite(Image("bg.png").Scale(screen.w, screen.h));
+
+// Maintain aspect ratio for background
+bg_image = Image("bg.png");
+screen_ratio = screen.h / screen.w;
+bg_image_ratio = bg_image.GetHeight() / bg_image.GetWidth();
+
+if (screen_ratio > bg_image_ratio) {
+    // Screen is taller - match height
+    bg_scale_factor = screen.h / bg_image.GetHeight();
+} else {
+    // Screen is wider - match width
+    bg_scale_factor = screen.w / bg_image.GetWidth();
+}
+
+scaled_bg_image = bg_image.Scale(
+    bg_image.GetWidth() * bg_scale_factor,
+    bg_image.GetHeight() * bg_scale_factor
+);
+
+bg = Sprite(scaled_bg_image);
+bg.SetX(screen.w / 2 - scaled_bg_image.GetWidth() / 2);
+bg.SetY(screen.h / 2 - scaled_bg_image.GetHeight() / 2);
 bg.SetZ(-10);
 
 /*
